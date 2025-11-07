@@ -1,0 +1,12 @@
+[
+    {
+        "ps_number": "PS1724",
+        "password": "PS1724",
+        "credential": "Admin"
+    },
+    {
+        "ps_number": "1001",
+        "password": "coach123",
+        "credential": "Coach"
+    }
+]

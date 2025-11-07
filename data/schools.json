@@ -1,0 +1,122 @@
+[
+  {
+    "id": "1565",
+    "nome": "Al Bayah School - C2 & C3 Girls",
+    "city": "",
+    "coaches": ["PS2443", "PS3286"]
+  },
+  {
+    "id": "2005",
+    "nome": "Al Dhafra School - C2 Boys",
+    "city": "",
+    "coaches": ["PS1013", "PS1628", "PS2855", "PS2442"]
+  },
+  {
+    "id": "2069",
+    "nome": "Al Dhannah School - C2 & C3 Boys",
+    "city": "",
+    "coaches": ["PS2855"]
+  },
+  {
+    "id": "2071",
+    "nome": "Al Dhannah School - C2 & C3 Girls",
+    "city": "",
+    "coaches": ["PS2443", "PS3286"]
+  },
+  {
+    "id": "1662",
+    "nome": "Al Ebtekar School - C2 & C3 Boys",
+    "city": "",
+    "coaches": ["PS2442", "PS3398"]
+  },
+  {
+    "id": "1643",
+    "nome": "Al Falah School - C3 Boys",
+    "city": "",
+    "coaches": ["PS1013"]
+  },
+  {
+    "id": "438",
+    "nome": "Al Farouq School - C2 & C3 Boys",
+    "city": "",
+    "coaches": ["PS1628"]
+  },
+  {
+    "id": "2065",
+    "nome": "Al Ghayathi School - C1-C2 & C3 Girls",
+    "city": "",
+    "coaches": ["PS2960", "PS3399"]
+  },
+  {
+    "id": "1562",
+    "nome": "Al Huiteen School - C1 & C2 Girls",
+    "city": "",
+    "coaches": ["PS2300"]
+  },
+  {
+    "id": "2086",
+    "nome": "Al Marfaa School - C2 & C3 Boys",
+    "city": "",
+    "coaches": ["PS2940", "PS3029"]
+  },
+  {
+    "id": "2085",
+    "nome": "Al Marfaa School - C2 & C3 Girls",
+    "city": "",
+    "coaches": ["PS1223", "PS2871"]
+  },
+  {
+    "id": "1564",
+    "nome": "Al Shabhana School - C2 & C3 Boys",
+    "city": "",
+    "coaches": ["PS1700", "PS2769"]
+  },
+  {
+    "id": "285",
+    "nome": "Al Siddique School - C2 & C3 Boys",
+    "city": "",
+    "coaches": ["PS1628"]
+  },
+  {
+    "id": "1682",
+    "nome": "Baynunah School - C2 Boys",
+    "city": "",
+    "coaches": ["PS2442", "PS3398"]
+  },
+  {
+    "id": "1151M",
+    "nome": "Beda Al Mutaw'a - C1 & C2 Boys",
+    "city": "",
+    "coaches": ["PS2855"]
+  },
+  {
+    "id": "1151F",
+    "nome": "Beda Al Mutaw'a - C1 & C2 Girls",
+    "city": "",
+    "coaches": ["PS2960", "PS3399"]
+  },
+  {
+    "id": "1563",
+    "nome": "Khanoor School - C1 & C2 Girls",
+    "city": "",
+    "coaches": ["PS1264"]
+  },
+  {
+    "id": "123456789",
+    "nome": "PALMS SPORTS",
+    "city": "",
+    "coaches": ["PS0007"]
+  },
+  {
+    "id": "282",
+    "nome": "Qatr Al Nada School - C3 Girls",
+    "city": "",
+    "coaches": ["PS1264", "PS2300"]
+  },
+  {
+    "id": "2066",
+    "nome": "Zayed City School",
+    "city": "",
+    "coaches": ["PS3030", "PS3134"]
+  }
+]
