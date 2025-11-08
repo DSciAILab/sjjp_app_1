@@ -1,10 +1,5 @@
-# ============================================================
-# SJJP Requests Portal - Requirements
-# Version: v3.6 (2025-11-07)
-# ============================================================
-
-streamlit>=1.37.0
-pandas>=2.0.0
-numpy>=1.25.0
-python-dateutil>=2.8.2
-uuid
+streamlit==1.38.0
+pandas
+supabase
+python-dotenv
+requests
