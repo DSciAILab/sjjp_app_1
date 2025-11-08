@@ -1,7 +1,8 @@
 from supabase import create_client
 
-SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"
-SUPABASE_KEY = "YOUR_SERVICE_ROLE_KEY"
+# ⚠️ USE AQUI A SERVICE ROLE KEY (privada)
+SUPABASE_URL = "https://fuynmwpwcekkyfkiaunu.supabase.co"  # substitua pelo seu
+SUPABASE_KEY = "sb_secret_dvhoQn3T9HXcWThT25VjoA_5xv8i3gL"  # service role key
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -46,5 +47,6 @@ create table if not exists requests (
 );
 """
 
+# Executa o SQL diretamente
 supabase.rpc("sql", {"query": sql_script}).execute()
-print("✅ Tables bootstrapped successfully.")
+print("✅ All tables created successfully in Supabase!")
