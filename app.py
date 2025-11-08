@@ -1,10 +1,9 @@
 # ============================================================
-# SJJP Requests Portal - Supabase Integrated Version
-# Version: v4.0 (2025-11-09)
+# SJJP Requests Portal - Supabase Integrated + Auto Bootstrap
+# Version: v4.5 (2025-11-09)
 # ============================================================
 
 import os
-import json
 import pandas as pd
 import streamlit as st
 from datetime import datetime
@@ -15,42 +14,113 @@ import uuid
 # 0) Page setup
 # ------------------------------------------------------------
 st.set_page_config(page_title="SJJP - Requests Portal", layout="wide")
-
 st.title("School Jiu-Jitsu Program - Requests Portal (Online)")
 
 # ------------------------------------------------------------
-# 1) Initialize Supabase connection (via Streamlit Secrets)
+# 1) Supabase connection
 # ------------------------------------------------------------
-SUPABASE_URL = None
-SUPABASE_KEY = None
-supabase: Client | None = None
+SUPABASE_URL = st.secrets.get("supabase", {}).get("url")
+SUPABASE_KEY = st.secrets.get("supabase", {}).get("key")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    st.error("❌ Supabase is not configured. Please check your Streamlit Secrets.")
+    st.stop()
 
 try:
-    SUPABASE_URL = st.secrets["supabase"]["url"]
-    SUPABASE_KEY = st.secrets["supabase"]["key"]
-    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-    st.session_state["supabase_connected"] = True
-except Exception:
-    st.session_state["supabase_connected"] = False
-
-if not st.session_state["supabase_connected"]:
-    st.error("Supabase is not configured. Please check your Streamlit Secrets.")
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+except Exception as e:
+    st.error(f"❌ Failed to connect to Supabase: {e}")
     st.stop()
+
+# ------------------------------------------------------------
+# 1.1) Auto-verify and bootstrap Supabase tables
+# ------------------------------------------------------------
+def table_exists(table_name: str) -> bool:
+    try:
+        res = supabase.table(table_name).select("*").limit(1).execute()
+        return not hasattr(res, "error")
+    except Exception:
+        return False
+
+def bootstrap_tables():
+    sql_scripts = {
+        "users": """
+            create table if not exists users (
+              ps_number text primary key,
+              password text not null,
+              credential text default 'Coach',
+              name text
+            );
+            insert into users (ps_number, password, credential, name)
+            values ('PS1724', 'PS1724', 'Admin', 'Administrator')
+            on conflict (ps_number) do nothing;
+        """,
+        "coaches": """
+            create table if not exists coaches (
+              ps_number text primary key,
+              name text
+            );
+        """,
+        "schools": """
+            create table if not exists schools (
+              id text primary key,
+              nome text,
+              city text,
+              coaches text[] default array[]::text[]
+            );
+        """,
+        "materials": """
+            create table if not exists materials (
+              category text,
+              subcategory text,
+              item text
+            );
+        """,
+        "requests": """
+            create table if not exists requests (
+              id uuid primary key default gen_random_uuid(),
+              school_id text,
+              category text,
+              material text,
+              quantity int,
+              date timestamp with time zone default now(),
+              ps_number text,
+              status text default 'Pending'
+            );
+        """
+    }
+
+    # Requires the SQL RPC helper function
+    for table, query in sql_scripts.items():
+        if not table_exists(table):
+            try:
+                supabase.rpc("sql", {"query": query}).execute()
+                st.success(f"✅ Created missing table: {table}")
+            except Exception as e:
+                st.warning(f"⚠️ Could not create {table}: {e}")
+
+try:
+    bootstrap_tables()
+except Exception as e:
+    st.warning(f"⚠️ Auto-bootstrap skipped: {e}")
 
 # ------------------------------------------------------------
 # 2) Authentication
 # ------------------------------------------------------------
 def authenticate(ps_number: str, password: str):
-    users = supabase.table("users").select("*").eq("ps_number", ps_number).execute()
-    data = users.data
-    if data:
-        user = data[0]
-        if user.get("password") == password:
-            return user
-    # Fallback: coaches table
-    coaches = supabase.table("coaches").select("*").eq("ps_number", ps_number).execute()
-    if coaches.data and password == ps_number:
-        return {"ps_number": ps_number, "credential": "Coach", "name": ps_number}
+    try:
+        users = supabase.table("users").select("*").eq("ps_number", ps_number).execute()
+        data = users.data
+        if data:
+            user = data[0]
+            if user.get("password") == password:
+                return user
+        # Fallback: check coaches (password = PS number)
+        coaches = supabase.table("coaches").select("*").eq("ps_number", ps_number).execute()
+        if coaches.data and password == ps_number:
+            return {"ps_number": ps_number, "credential": "Coach", "name": ps_number}
+    except Exception:
+        pass
     return None
 
 def require_login():
@@ -95,9 +165,8 @@ st.divider()
 if menu == "Submit Request":
     st.header("Submit Request")
 
-    # Fetch materials and schools from Supabase
-    schools = supabase.table("schools").select("*").execute().data
-    materials = supabase.table("materials").select("*").execute().data
+    schools = supabase.table("schools").select("*").execute().data or []
+    materials = supabase.table("materials").select("*").execute().data or []
 
     if not schools:
         st.warning("No schools found.")
@@ -137,13 +206,12 @@ elif menu == "Manage Requests":
     st.header("Manage Requests")
     st.caption("Only Pending requests can be modified or deleted.")
 
-    # Load requests (admin sees all)
     if user["credential"] == "Admin":
         query = supabase.table("requests").select("*")
     else:
         query = supabase.table("requests").select("*").eq("ps_number", user["ps_number"])
 
-    rows = query.execute().data
+    rows = query.execute().data or []
     if not rows:
         st.info("No requests found.")
         st.stop()
@@ -153,7 +221,7 @@ elif menu == "Manage Requests":
         df.set_index("id", inplace=True)
 
     df["Delete"] = False
-    st.dataframe(df, use_container_width=True)
+    st.data_editor(df, use_container_width=True)
 
     to_delete = st.multiselect("Select IDs to delete:", df.index)
     if st.button("Delete Selected"):
